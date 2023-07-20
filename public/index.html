@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Meu Google Docs</title>
+
+    <link rel="stylesheet" text="text/css" href="estilo.css">
+  </head>
+  <body>
+    <div class="principal">
+      <div class="conteudo">
+        <h1>Meu Google Docs</h1>
+        <textarea id="editor" rows="20" cols="100"></textarea>
+      </div>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      var elemento
+
+      function obterPontoDeInsercao() {
+      elemento = document.getElementById('editor');
+    }
+
+      // Receber o texto atual do servidor
+      socket.on('text', (text) => {
+        document.getElementById('editor').value = text;
+      });
+
+      // Enviar o texto editado para o servidor
+      document.getElementById('editor').addEventListener('input', (event) => {
+
+        elemento = document.getElementById('editor');
+
+        var ponto = elemento.selectionStart;
+        var text = event.target.value;
+
+        var dados = {
+          ponto : ponto,
+          text : text
+        }
+
+        socket.emit('edit', dados);
+      });
+      
+    </script>
+  </body>
+</html>
